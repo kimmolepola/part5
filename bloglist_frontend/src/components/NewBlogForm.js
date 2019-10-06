@@ -1,8 +1,7 @@
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import blogService from '../services/blogs';
 
-const NewBlogForm = ({ states }) => {
+const NewBlogForm = ({ states, notify }) => {
   const [url, setUrl] = useState('');
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
@@ -17,11 +16,9 @@ const NewBlogForm = ({ states }) => {
       setTitle('');
       setAuthor('');
       setUrl('');
+      notify(`a new blog ${title} by ${author} added`, 'success');
     } catch (exception) {
-      states.setErrorMessage('Failed');
-      setTimeout(() => {
-        states.setErrorMessage(null);
-      }, 5000);
+      notify({ message: 'Failed', className: 'error' });
     }
   };
 
@@ -66,11 +63,6 @@ const NewBlogForm = ({ states }) => {
       </form>
     </div>
   );
-};
-
-
-NewBlogForm.propTypes = {
-  states: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default NewBlogForm;

@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import NewBlogForm from './components/NewBlogForm';
 import blogService from './services/blogs';
-import Blog from './components/Blog';
 import loginService from './services/login';
+import Notification from './components/Notification';
+import NewBlogForm from './components/NewBlogForm';
+import Blog from './components/Blog';
+import './App.css';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const states = {
     blogs,
     setBlogs,
-    setErrorMessage,
     username,
     setUsername,
     password,
@@ -38,6 +39,12 @@ const App = () => {
     }
   }, []);
 
+  const notify = (message, className) => {
+    setNotification({ message, className });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  };
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser');
@@ -58,20 +65,18 @@ const App = () => {
       setUsername('');
       setPassword('');
     } catch (exception) {
-      setErrorMessage('Wrong credentials');
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      notify('Wrong username or password', 'error');
     }
   };
 
   const blogForm = () => (
     <div>
       <h2>blogs</h2>
+      <Notification notification={notification} />
       <p>{user.name} logged in
         <button onClick={handleLogout} type="button">logout</button>
       </p>
-      <NewBlogForm states={states} />
+      <NewBlogForm states={states} notify={notify} />
       {blogs.map((blog) => <Blog key={blog.id} blog={blog} />)}
     </div>
   );
@@ -79,6 +84,7 @@ const App = () => {
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
+      <Notification notification={notification} />
       <form onSubmit={handleLogin}>
         <div>
             username
@@ -104,6 +110,7 @@ const App = () => {
       </form>
     </div>
   );
+
 
   return (
     <div>
