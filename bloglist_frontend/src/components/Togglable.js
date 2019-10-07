@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle } from 'react';
 
-const Togglable = ({ children, buttonLabel }) => {
+/* eslint-disable react/prop-types */
+const Togglable = React.forwardRef(({ children, buttonLabel }, ref) => {
   const [visible, setVisible] = useState(false);
 
   const hideWhenVisible = { display: visible ? 'none' : '' };
   const showWhenVisible = { display: visible ? '' : 'none' };
 
-  const toggleVisibility = () => {
-    setVisible(!visible);
-  };
+  const toggleVisibility = () => setVisible(!visible);
+
+  useImperativeHandle(ref, () => ({ toggleVisibility }));
 
   return (
     <div>
@@ -21,6 +22,9 @@ const Togglable = ({ children, buttonLabel }) => {
       </div>
     </div>
   );
-};
+});
+/* eslint-enable react/prop-types */
+
+Togglable.displayName = 'Togglable';
 
 export default Togglable;

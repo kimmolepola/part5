@@ -1,5 +1,6 @@
 import React from 'react';
 
+/* eslint-disable react/prop-types */
 const Notification = ({ notification }) => {
   if (notification === null) {
     return null;
@@ -10,5 +11,6 @@ const Notification = ({ notification }) => {
     </div>
   );
 };
+/* eslint-enable react/prop-types */
 
 export default Notification;

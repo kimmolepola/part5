@@ -3,9 +3,12 @@ module.exports = {
     browser: true,
     commonjs: true,
     es6: true,
+    'jest/globals': true,
   },
   extends: [
     'airbnb',
+    'eslint:recommended',
+    'plugin:react/recommended',
   ],
   globals: {
     Atomics: 'readonly',
@@ -19,12 +22,13 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react',
+    'react', 'jest',
   ],
   rules: {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-one-expression-per-line": "off",
-    "react/prop-types": "off",
   },
   "parser": "babel-eslint"
 };
+
+//"react/prop-types": "off",

@@ -35,7 +35,7 @@ const App = () => {
     if (loggedUserJSON) {
       const usr = JSON.parse(loggedUserJSON);
       setUser(usr);
-      blogService.setToken(usr.token);
+      blogService.setConfig(usr.token);
     }
   }, []);
 
@@ -44,6 +44,36 @@ const App = () => {
     setTimeout(() => {
       setNotification(null);
     }, 5000);
+  };
+
+  const handleBlogDelete = async (id, title, author) => {
+    if (window.confirm(`remove blog ${title} by ${author}`)) { // eslint-disable-line no-alert
+      const response = await blogService.remove(id);
+      if (response.status === 204) {
+        const newBlogs = blogs.reduce((result, x) => {
+          if (x.id !== id) {
+            result.push(x);
+          }
+          return result;
+        }, []);
+        setBlogs(newBlogs);
+      } else {
+        notify('failed', 'error');
+      }
+    }
+  };
+
+  const handleBlogUpdate = async (content) => {
+    const response = await blogService.put(content);
+    const newBlogs = blogs.map((blg) => {
+      if (blg.id === response.id) {
+        const fullContent = { ...response };
+        fullContent.user = blg.user;
+        return fullContent;
+      }
+      return blg;
+    });
+    setBlogs(newBlogs);
   };
 
   const handleLogout = () => {
@@ -60,7 +90,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(usr),
       );
-      blogService.setToken(usr.token);
+      blogService.setConfig(usr.token);
       setUser(usr);
       setUsername('');
       setPassword('');
@@ -77,7 +107,15 @@ const App = () => {
         <button onClick={handleLogout} type="button">logout</button>
       </p>
       <NewBlogForm states={states} notify={notify} />
-      {blogs.map((blog) => <Blog key={blog.id} blog={blog} />)}
+      {blogs.sort((a, b) => a.likes - b.likes).map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          handleBlogUpdate={handleBlogUpdate}
+          handleBlogDelete={handleBlogDelete}
+          user={user}
+        />
+      ))}
     </div>
   );
 

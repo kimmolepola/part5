@@ -1,17 +1,27 @@
 import axios from 'axios';
 
+
 const baseUrl = '/api/blogs';
 
-let token;
+let config;
 
-const setToken = (t) => {
-  token = `bearer ${t}`;
+const setConfig = (t) => {
+  config = {
+    headers: { Authorization: `bearer ${t}` },
+  };
+};
+
+const remove = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`, config);
+  return response;
+};
+
+const put = async (content) => {
+  const response = await axios.put(`${baseUrl}/${content.id}`, content, config);
+  return response.data;
 };
 
 const create = async (content) => {
-  const config = {
-    headers: { Authorization: token },
-  };
   const response = await axios.post(baseUrl, content, config);
   return response.data;
 };
@@ -21,4 +31,6 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
-export default { getAll, setToken, create };
+export default {
+  getAll, setConfig, create, put, remove,
+};

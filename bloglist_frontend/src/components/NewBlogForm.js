@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
 
+/* eslint-disable react/prop-types */
 const NewBlogForm = ({ states, notify }) => {
   const [url, setUrl] = useState('');
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
 
+  const noteFormRef = React.createRef();
+
   const handleCreateNewBlog = async (event) => {
     event.preventDefault();
+    noteFormRef.current.toggleVisibility();
     try {
       const response = await blogService.create({
         title, author, url,
@@ -19,13 +23,13 @@ const NewBlogForm = ({ states, notify }) => {
       setUrl('');
       notify(`a new blog ${title} by ${author} added`, 'success');
     } catch (exception) {
-      notify({ message: 'Failed', className: 'error' });
+      notify('Failed', 'error');
     }
   };
 
   return (
     <div>
-      <Togglable buttonLabel="new note">
+      <Togglable buttonLabel="new note" ref={noteFormRef}>
         <h2>create new</h2>
         <form onSubmit={handleCreateNewBlog}>
           <div>
@@ -67,5 +71,6 @@ const NewBlogForm = ({ states, notify }) => {
     </div>
   );
 };
+/* eslint-enable react/prop-types */
 
 export default NewBlogForm;
