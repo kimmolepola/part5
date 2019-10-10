@@ -47,10 +47,9 @@ const Blog = ({
   return (
     <div>
       <div tabIndex="0" role="button" style={hideWhenExpanded} onKeyDown={() => toggleExpanded()} onClick={() => toggleExpanded()}>
-        {blog.title} {blog.author} jepsis
+        {blog.title} {blog.author}
       </div>
       <div tabIndex="0" role="button" style={showWhenExpanded} onKeyDown={() => toggleExpanded()} onClick={() => toggleExpanded()}>
-        juujoo
         {blog.title} {blog.author}<br />
         <a href={blog.url}>{blog.url}</a><br />
         {blog.likes}<button type="button" onClick={() => handleLike()}>like</button> <br />
