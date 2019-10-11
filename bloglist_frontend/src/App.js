@@ -5,23 +5,14 @@ import Notification from './components/Notification';
 import NewBlogForm from './components/NewBlogForm';
 import Blog from './components/Blog';
 import './App.css';
+import { useField } from './hooks';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [notification, setNotification] = useState(null);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const states = {
-    blogs,
-    setBlogs,
-    username,
-    setUsername,
-    password,
-    setPassword,
-    user,
-    setUser,
-  };
+  const { reset: usernamereset, ...username } = useField('text', 'Username');
+  const { reset: passwordreset, ...password } = useField('password', 'Password');
 
   useEffect(() => {
     blogService
@@ -85,15 +76,15 @@ const App = () => {
     event.preventDefault();
     try {
       const usr = await loginService.login({
-        username, password,
+        username: username.value, password: password.value,
       });
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(usr),
       );
       blogService.setConfig(usr.token);
       setUser(usr);
-      setUsername('');
-      setPassword('');
+      usernamereset();
+      passwordreset();
     } catch (exception) {
       notify('Wrong username or password', 'error');
     }
@@ -106,7 +97,7 @@ const App = () => {
       <p>{user.name} logged in
         <button onClick={handleLogout} type="button">logout</button>
       </p>
-      <NewBlogForm states={states} notify={notify} />
+      <NewBlogForm user={user} blogs={blogs} setBlogs={setBlogs} notify={notify} />
       {blogs.sort((a, b) => a.likes - b.likes).map((blog) => (
         <Blog
           key={blog.id}
@@ -119,6 +110,7 @@ const App = () => {
     </div>
   );
 
+  /* eslint-disable react/jsx-props-no-spreading */
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
@@ -126,29 +118,17 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
             username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => {
-              setUsername(target.value);
-            }}
-          />
+          <input {...username} />
         </div>
         <div>
             password
-          <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <input {...password} />
         </div>
         <button type="submit">Login</button>
       </form>
     </div>
   );
-
+  /* eslint-enable react/jsx-props-no-spreading */
 
   return (
     <div>
